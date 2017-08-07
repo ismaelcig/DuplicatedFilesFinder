@@ -3,10 +3,34 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:DuplicatedFilesFinder"
+        xmlns:Model="clr-namespace:DuplicatedFilesFinder.Model"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="350" MinHeight="350" Width="525" MinWidth="525">
+
+    <Window.Resources>
+
+        <HierarchicalDataTemplate DataType="{x:Type Model:DirectoryItem}"
+                                  ItemsSource="{Binding Items}">
+            <TextBlock Text="{Binding Path=Name}" ToolTip="{Binding Path=Path}" />
+        </HierarchicalDataTemplate>
+
+        <DataTemplate DataType="{x:Type Model:FileItem}">
+            <TextBlock Text="{Binding Path=Name}" ToolTip="{Binding Path=Path}" />
+        </DataTemplate>
+
+    </Window.Resources>
+
     <Grid>
-        
+        <TextBox x:Name="textBox" IsEnabled="False" HorizontalAlignment="Stretch" Height="23" Margin="10,39,45,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top"/>
+        <Label x:Name="label" Content="Starter Folder:" HorizontalAlignment="Left" Margin="10,13,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="button" Content="..." HorizontalAlignment="Right" Margin="0,39,10,0" VerticalAlignment="Top" Width="27" Height="23" Click="button_Click"/>
+        <DataGrid x:Name="dataGrid" HorizontalAlignment="Right" Width="180" Margin="0,67,10,10" DataContext="FileItem" VerticalAlignment="Stretch" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn IsReadOnly="True" Binding="{Binding Name}" Header="Repeated Files"/>
+                <DataGridTextColumn IsReadOnly="True" Binding="{Binding Path}" Header="Path"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <TreeView x:Name="treeView" ItemsSource="{Binding}" HorizontalAlignment="Stretch" Margin="10,67,200,10" VerticalAlignment="Stretch" />
+
     </Grid>
 </Window>
