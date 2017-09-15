@@ -1,11 +1,14 @@
-﻿using System.Security.Cryptography;
+﻿using System.Collections.Generic;
 
 namespace DuplicatedFilesFinder
 {
     public class AuxObj
     {
-        public MD5 checksum { get; set; }
-        public int reps { get; set; }
-        public string path { get; set; }
+        public byte[] checksum { get; set; }
+        public List<Model.FileItem> files { get; set; }
+        public AuxObj()
+        {
+            files = new List<Model.FileItem>();
+        }
     }
 }

@@ -25,6 +25,8 @@ namespace DuplicatedFilesFinder
     public partial class MainWindow : Window
     {
         List<Model.FileItem> Files = new List<Model.FileItem>();
+        List<AuxObj> aos = new List<AuxObj>();
+        List<Model.FileItem> DuplicatedFiles = new List<Model.FileItem>();
 
         public MainWindow()
         {
@@ -52,14 +54,14 @@ namespace DuplicatedFilesFinder
                     if (item.GetType().Equals(typeof(Model.DirectoryItem)))
                     {//If it is a folder
                         Model.DirectoryItem folder = (Model.DirectoryItem)item;
-                        Console.WriteLine(item.Name + ": ");
-                        foreach (var folderItem in folder.Items)
-                        {
-                            if (folderItem.GetType().Equals(typeof(Model.FileItem)))
-                            {
-                                Console.WriteLine("\t" + folderItem.Name);
-                            }
-                        }
+                        //Console.WriteLine(item.Name + ": ");
+                        //foreach (var folderItem in folder.Items)
+                        //{
+                        //    if (folderItem.GetType().Equals(typeof(Model.FileItem)))
+                        //    {
+                        //        Console.WriteLine("\t" + folderItem.Name);
+                        //    }
+                        //}
                     }
                     else
                     {//If it's a file
@@ -68,16 +70,64 @@ namespace DuplicatedFilesFinder
                         //Console.WriteLine("File: " + item.Name);
                     }
                 }
+                foreach (Model.FileItem file in Files)
+                {
+                    MD5 md5 = MD5.Create();
+                    var stream = File.OpenRead(file.Path);
+                    AuxObj ao = new AuxObj();
+                    ao.checksum = md5.ComputeHash(stream);
+                    ao.files.Add(file);//Add that file to the auxobj.files list
+                    //TODO: Compare files byte-by-byte
 
 
+                    /*
+                    bool equal = true;
+                    int cont = 0;
+                    foreach (AuxObj aobj in aos)
+                    {
+                        foreach (byte b in aobj.checksum)
+                        {
+                            if (aobj.checksum[cont] == ao.checksum[cont])
+                            {
+                                cont++;
+                            }
+                            else
+                            {
+                                equal = false;
+                                //break;
+                            }
+                        }
+                        
+                    }
 
+                    if (!equal)
+                    //if (aos.Where(c=>c.checksum == ao.checksum).Count() == 0)
+                    {//If that checksum is not on the list
+                        aos.Add(ao);//Add auxobj to the aos list
+                    }
+                    else
+                    {//Add file to the auxobj.files list
+                        aos.Single(c => c.checksum == ao.checksum).files.Add(file);
+                    }
+                    Console.Write(file.Name + ":\t");
+                    foreach (byte b in ao.checksum)
+                    {
+                        Console.Write(b);
+                    }
+                    Console.WriteLine(";");*/
+                }
+                //If there's a checksum associated to more than 1 file, show all the files
+                foreach (AuxObj aobj in aos)
+                {
+                    if (aobj.files.Count > 1)
+                    {
+                        DuplicatedFiles.AddRange(aobj.files);
+                    }
+                }
+                dataGrid.ItemsSource = null;
+                dataGrid.ItemsSource = DuplicatedFiles;
 
-
-                /*
-                MD5 md5 = MD5.Create();
-                var stream = File.OpenRead()
-                
-                dataGrid.ItemsSource = new DirectoryInfo(cofd.FileName).GetFiles();*/
+                //dataGrid.ItemsSource = new DirectoryInfo(cofd.FileName).GetFiles();
 
             }
         }
